@@ -1,0 +1,6 @@
+{
+  "dripMapping": {
+    "FLOWER": "GPIO 7",
+    "VEGETABLE": "GPIO 8"
+  }
+}
