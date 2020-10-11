@@ -33,12 +33,12 @@ public class DripIrrigationManager {
         pool = Executors.newFixedThreadPool(2);
     }
 
-    public void turnOn(final DripRequest dripRequest) throws InvalidPinConfiguration, InvalidRequestException {
+    public void turnOnDrip(final DripRequest dripRequest) throws InvalidPinConfiguration, InvalidRequestException {
         if (dripRequest.getTimeInMin() > MAX_DRIP_ON_TIME_IN_MIN || dripRequest.getTimeInMin() < 0) {
             throw new InvalidRequestException(String.format("Max drip on time is %s", MAX_DRIP_ON_TIME_IN_MIN));
         }
         irrigationService.turnOnDrip(dripRequest.getDripName());
-        final Executor executor = CompletableFuture.delayedExecutor(dripRequest.getTimeInMin(), TimeUnit.SECONDS, pool);
+        final Executor executor = CompletableFuture.delayedExecutor(dripRequest.getTimeInMin(), TimeUnit.MINUTES, pool);
         CompletableFuture.runAsync(() -> {
             try {
                 irrigationService.turnOffDrip(dripRequest.getDripName());

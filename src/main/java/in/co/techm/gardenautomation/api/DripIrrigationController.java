@@ -33,9 +33,9 @@ public class DripIrrigationController {
 
     @ResponseBody
     @PostMapping(value = "/drip", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity turnOn(@RequestBody final DripRequest dripRequest) {
+    public ResponseEntity turnOnDrip(@RequestBody final DripRequest dripRequest) {
         try {
-            manager.turnOn(dripRequest);
+            manager.turnOnDrip(dripRequest);
             return ResponseEntity.ok(GENERIC_SUCCESS_RESPONSE);
         } catch (final InvalidRequestException e) {
             log.info("Unable to start drip {}", e.getMessage());
