@@ -30,13 +30,6 @@ public class IrrigationService implements IIrrigationService {
         this.gpioPinMapping = gpioPinMapping;
     }
 
-    public void turnOn() throws InterruptedException {
-        final GpioPinDigitalOutput ledPin7 = gpioController.provisionDigitalOutputPin(RaspiPin.GPIO_07);
-        ledPin7.high();
-        Thread.sleep(10000);
-        ledPin7.low();
-    }
-
     @Override
     public void turnOnSprinkler(SprinklerName sprinklerName) {
         throw new RuntimeException("Sprinkler not installed");
@@ -53,12 +46,12 @@ public class IrrigationService implements IIrrigationService {
 //        unProvisionPin(gpioPinDigitalInput);
         final GpioPinDigitalOutput gpioPinDigitalOutput = provisionPinOutput(raspPin);
         gpioPinDigitalOutput.high();
-        log.info("Drip is on {}", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(LocalDateTime.now()));
+        log.info("Drip has been turned on {}", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(LocalDateTime.now()));
         unProvisionPin(gpioPinDigitalOutput);
     }
 
     @Override
-    public void turnOffDrip(DripName dripName) throws InvalidPinConfiguration {
+    public void turnOffDrip(final DripName dripName) throws InvalidPinConfiguration {
         final Pin raspPin = getRaspiPin(dripName);
 //        final GpioPinDigitalInput gpioPinDigitalInput = gpioController.provisionDigitalInputPin(raspPin);
 //        if (gpioPinDigitalInput.isLow()) {
@@ -68,7 +61,7 @@ public class IrrigationService implements IIrrigationService {
 //        unProvisionPin(gpioPinDigitalInput);
         final GpioPinDigitalOutput gpioPinDigitalOutput = provisionPinOutput(raspPin);
         gpioPinDigitalOutput.low();
-        log.info("drip is off {}", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(LocalDateTime.now()));
+        log.info("drip has been turned off {}", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(LocalDateTime.now()));
         unProvisionPin(gpioPinDigitalOutput);
     }
 

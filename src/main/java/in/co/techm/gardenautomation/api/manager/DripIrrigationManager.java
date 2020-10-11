@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class DripIrrigationManager {
     private static final Logger log = LoggerFactory.getLogger(DripIrrigationManager.class);
-    private static final long MAX_DRIP_ON_TIME_IN_MIN = 15;
+    private static final long MAX_DRIP_ON_TIME_IN_MIN = 30;
     private final IrrigationService irrigationService;
     private ExecutorService pool;
 
@@ -34,17 +34,21 @@ public class DripIrrigationManager {
     }
 
     public void turnOnDrip(final DripRequest dripRequest) throws InvalidPinConfiguration, InvalidRequestException {
-        if (dripRequest.getTimeInMin() > MAX_DRIP_ON_TIME_IN_MIN || dripRequest.getTimeInMin() < 0) {
-            throw new InvalidRequestException(String.format("Max drip on time is %s", MAX_DRIP_ON_TIME_IN_MIN));
-        }
-        irrigationService.turnOnDrip(dripRequest.getDripName());
-        final Executor executor = CompletableFuture.delayedExecutor(dripRequest.getTimeInMin(), TimeUnit.MINUTES, pool);
-        CompletableFuture.runAsync(() -> {
-            try {
-                irrigationService.turnOffDrip(dripRequest.getDripName());
-            } catch (final Exception e) {
-                log.error("Unable to stop drip  {} ", dripRequest.getDripName(), e);
+        if (dripRequest.isTurnOn()) {
+            if (dripRequest.getTimeInMin() > MAX_DRIP_ON_TIME_IN_MIN || dripRequest.getTimeInMin() < 0) {
+                throw new InvalidRequestException(String.format("Max drip on time is %s", MAX_DRIP_ON_TIME_IN_MIN));
             }
-        }, executor);
+            irrigationService.turnOnDrip(dripRequest.getDripName());
+            final Executor executor = CompletableFuture.delayedExecutor(dripRequest.getTimeInMin(), TimeUnit.MINUTES, pool);
+            CompletableFuture.runAsync(() -> {
+                try {
+                    irrigationService.turnOffDrip(dripRequest.getDripName());
+                } catch (final Exception e) {
+                    log.error("Unable to stop drip  {} ", dripRequest.getDripName(), e);
+                }
+            }, executor);
+        } else {
+            irrigationService.turnOffDrip(dripRequest.getDripName());
+        }
     }
 }
