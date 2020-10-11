@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class IrrigationService implements IIrrigationService {
     private static final Logger log = LoggerFactory.getLogger(IrrigationService.class);
@@ -50,6 +53,7 @@ public class IrrigationService implements IIrrigationService {
 //        unProvisionPin(gpioPinDigitalInput);
         final GpioPinDigitalOutput gpioPinDigitalOutput = provisionPinOutput(raspPin);
         gpioPinDigitalOutput.high();
+        log.info("Drip is on {}", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(LocalDateTime.now()));
         unProvisionPin(gpioPinDigitalOutput);
     }
 
@@ -64,6 +68,7 @@ public class IrrigationService implements IIrrigationService {
 //        unProvisionPin(gpioPinDigitalInput);
         final GpioPinDigitalOutput gpioPinDigitalOutput = provisionPinOutput(raspPin);
         gpioPinDigitalOutput.low();
+        log.info("drip is off {}", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(LocalDateTime.now()));
         unProvisionPin(gpioPinDigitalOutput);
     }
 
